@@ -17,21 +17,21 @@ namespace NuGetQA
         static InferenceSession session;
         static CancellationToken cancelToken;
         static string modelPath;
+        static string modelUrl = "https://storage.yandexcloud.net/dotnet4/bert-large-uncased-whole-word-masking-finetuned-squad.onnx";
 
 
-        public LLM(string _modelPath, string modelUrl, CancellationToken _cancelToken)
+        public LLM(string _modelPath, CancellationToken _cancelToken)
         {
             modelPath = _modelPath;
             cancelToken = _cancelToken;
-            if (!File.Exists(modelPath))
-                DownloadModel(modelPath, modelUrl);
-
             session = new InferenceSession(modelPath);
         }
 
 
-        public void DownloadModel(string modelPath, string modelUrl)
+        public void DownloadModel(string modelPath)
         {
+            if (File.Exists(modelPath))
+                return;
 
             int retries = 10;
 
@@ -40,17 +40,12 @@ namespace NuGetQA
                 try
                 {
                     WebClient myWebClient = new WebClient();
-                    Console.WriteLine("Downloading model...");
                     myWebClient.DownloadFile(modelUrl, modelPath);
-                    Console.WriteLine("Model successfully downloaded");
                     return;
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Something went wrong, trying again...");
-                }
+                catch (Exception) { }
             }
-            Console.WriteLine("Can't download model(");
+            throw new Exception("Failed to download model");
         }
 
         public Task<string> GetAnswerAsync(string text, string question)

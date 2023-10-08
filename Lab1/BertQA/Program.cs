@@ -9,9 +9,9 @@ class Program
         string text = File.ReadAllText(args[0]);
 
         var cts = new CancellationTokenSource();
-        string modelUrl = "https://storage.yandexcloud.net/dotnet4/bert-large-uncased-whole-word-masking-finetuned-squad.onnx";
         string modelPath = "bert-large-uncased-whole-word-masking-finetuned-squad.onnx";
-        var llm = new LLM(modelPath, modelUrl, cts.Token);
+        var llm = new LLM(modelPath, cts.Token);
+        llm.DownloadModel(modelPath);
         var taskList = new List<Task>();
         Console.Write("Write questions:\n");
         while (!cts.Token.IsCancellationRequested)
@@ -26,6 +26,5 @@ class Program
 
         }
         await Task.WhenAll(taskList);
-
     }
 }
