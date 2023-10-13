@@ -6,6 +6,10 @@
 *.user
 *.sln.docstates
 
+# Visual Studio
+.vs/
+./Lab1/.vs
+
 # VS Code
 .vscode/
 

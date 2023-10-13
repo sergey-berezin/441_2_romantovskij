@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "BertQA": {
+      "commandName": "Project",
+      "commandLineArgs": "hobbit.txt"
+    }
+  }
+}
