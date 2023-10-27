@@ -15,13 +15,13 @@ namespace WpfApp
         string modelPath = "bert-large-uncased-whole-word-masking-finetuned-squad.onnx";
         public CancellationTokenSource cts;
         public string text = "";
-        public List<string> chat = new List<string>();
+        public List<string> Chat { get; set; }
 
         public ViewData()
         {
             cts = new CancellationTokenSource();
             llm = new LLM(modelPath, cts.Token);
-
+            Chat = new List<string>();
         }
 
         public Task DownloadAsync()

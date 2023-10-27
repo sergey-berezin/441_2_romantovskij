@@ -27,17 +27,18 @@ namespace WpfApp
         {
             InitializeComponent();
             DataContext = viewData;
-            listViewChat.ItemsSource = viewData.chat;
+            listViewChat.ItemsSource = viewData.Chat;
             viewData.DownloadAsync();
         }
 
         private async void btnSend_Click(object sender, RoutedEventArgs e)
         {
+            btnSend.IsEnabled = false;
             try
             {
                 string question = textBoxEntry.Text;
-                //textBoxEntry.Clear();
-                viewData.chat.Add(question);
+                textBoxEntry.Clear();
+                viewData.Chat.Add(question);
                 listViewChat.Items.Refresh();
                 if (question.StartsWith("/load"))
                 {
@@ -50,7 +51,7 @@ namespace WpfApp
                     if (openFileDialog.ShowDialog() == true)
                     {
                         viewData.text = File.ReadAllText(openFileDialog.FileName);
-                        viewData.chat.Add(viewData.text);
+                        viewData.Chat.Add(viewData.text);
                     }
                 }
                 else if (!viewData.isDownloaded)
@@ -66,7 +67,7 @@ namespace WpfApp
                     var answer = await viewData.llm.GetAnswerAsync(viewData.text, question);
                     if (answer != null)
                     {
-                        viewData.chat.Add("Answer: " + answer);
+                        viewData.Chat.Add("Answer: " + answer);
                     }
                 }
             }
@@ -75,6 +76,7 @@ namespace WpfApp
                 MessageBox.Show(ex.Message);
             }
             listViewChat.Items.Refresh();
+            btnSend.IsEnabled = true;
         }
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)
