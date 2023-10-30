@@ -24,14 +24,16 @@ namespace NuGetQA
         {
             modelPath = _modelPath;
             cancelToken = _cancelToken;
-            session = new InferenceSession(modelPath);
         }
 
 
         public void DownloadModel(string modelPath)
         {
             if (File.Exists(modelPath))
+            {
+                session = new InferenceSession(modelPath);
                 return;
+            }
 
             int retries = 10;
 
@@ -41,6 +43,7 @@ namespace NuGetQA
                 {
                     WebClient myWebClient = new WebClient();
                     myWebClient.DownloadFile(modelUrl, modelPath);
+                    session = new InferenceSession(modelPath);
                     return;
                 }
                 catch (Exception) { }

@@ -9,6 +9,7 @@
 # Visual Studio
 .vs/
 ./Lab1/.vs
+./Lab2/.vs
 
 # VS Code
 .vscode/
