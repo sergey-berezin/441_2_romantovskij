@@ -5,21 +5,22 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfApp"
         mc:Ignorable="d"
-        Title="MainWindow" Height="758" Width="512">
-    <Grid Height="754" VerticalAlignment="Center" HorizontalAlignment="Center" Width="512">
+        Title="MainWindow" Height="529" Width="513">
+    <Grid Height="652" VerticalAlignment="Center" HorizontalAlignment="Center" Width="522">
         <Grid.RowDefinitions>
-            <RowDefinition Height="48"/>
-            <RowDefinition Height="634"/>
+            <RowDefinition Height="169"/>
+            <RowDefinition Height="323"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="455*"/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="403*"/>
+            <ColumnDefinition Width="108*"/>
+            <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <TextBox Name="textBoxEntry" HorizontalAlignment="Left" Grid.Row="2" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="442" Height="42" Margin="10,6,0,0"/>
-        <Button Name="btnSend" Click="btnSend_Click" Content="Send" HorizontalAlignment="Left" Grid.Row="2" VerticalAlignment="Bottom" Height="42" Width="44" Margin="454,0,0,24"/>
-        <ListView Name="listViewChat" Grid.Row="1" d:ItemsSource="{d:SampleData ItemCount=5}">
-        </ListView>
-        <Button Name="btnCancel" Click="btnCancel_Click" Content="Cancel" HorizontalAlignment="Left" Margin="461,8,0,0" VerticalAlignment="Top" Height="38" Width="40" Background="#FFE01B1B"/>
+        <TextBox Name="textBoxEntry" HorizontalAlignment="Left" Grid.Row="2" TextWrapping="Wrap" Text="" Width="442" Margin="10,6,0,0" Height="42" VerticalAlignment="Top" Grid.ColumnSpan="2"/>
+        <Button Name="btnSend" Click="btnSend_Click" Content="Send" Grid.Row="2" VerticalAlignment="Top" Height="42" Margin="49,6,0,0" HorizontalAlignment="Left" Width="44" Background="Aqua" Grid.Column="1"/>
+        <ListView Name="listViewChat" Grid.Row="1" d:ItemsSource="{d:SampleData ItemCount=5}" Grid.ColumnSpan="3" Margin="0,0,1,0"/>
+        <Button Name="btnCancel" Click="btnCancel_Click" Content="Cancel" HorizontalAlignment="Left" Margin="59,127,0,2" Width="40" Background="Yellow" Grid.Column="1"/>
+        <Button Name="btnDelete" Click="btnDelete_Click" Content="Delete" HorizontalAlignment="Left" Margin="10,127,0,2" Width="40" Background="Red" Grid.Column="1"/>
     </Grid>
 </Window>
