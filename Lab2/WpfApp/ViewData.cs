@@ -46,7 +46,6 @@ namespace WpfApp
 
                 File.WriteAllText(tempFilePath, jsonString);
                 File.Replace(tempFilePath, chatHistoryFileName, null);
-  
             }
             catch (Exception ex)
             {
