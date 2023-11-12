@@ -40,6 +40,8 @@ namespace WpfApp
         {
             try
             {
+                if(!File.Exists(chatHistoryFileName)) File.WriteAllText(chatHistoryFileName, "");
+
                 string jsonString = JsonConvert.SerializeObject(
                     new Tuple<List<string>, Dictionary<string, Dictionary<string, string>>>(Chat, Answers));
                 string tempFilePath = chatHistoryFileName + ".temp";
