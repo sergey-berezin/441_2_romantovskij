@@ -9,6 +9,7 @@ using NuGetQA;
 using System.Text;
 using System.Security.Cryptography;
 using Microsoft.Win32;
+using System.ComponentModel;
 
 namespace WpfApp
 {
@@ -23,7 +24,7 @@ namespace WpfApp
         public List<string> Chat { get; set; }
         public Dictionary<string, Dictionary<string, string>> Answers { get; set; }  // {hash(text): {question: answer}}
 
-        public string chatHistoryFileName = "chat_history.json";
+        public string chatHistoryFileName = "chat_history";
 
         public ViewData()
         {
@@ -33,28 +34,36 @@ namespace WpfApp
             textHash = "";
             Chat = new List<string>();
             Answers = new Dictionary<string, Dictionary<string, string>>();
-            LoadChat();
         }
 
         public void SaveChat()
         {
+            try
+            {
+                string jsonString = JsonConvert.SerializeObject(
+                    new Tuple<List<string>, Dictionary<string, Dictionary<string, string>>>(Chat, Answers));
+                string tempFilePath = chatHistoryFileName + ".temp";
 
-            string jsonString = JsonConvert.SerializeObject(
-                new Tuple<List<string>, Dictionary<string, Dictionary<string, string>>>(Chat, Answers));
-            File.WriteAllText(chatHistoryFileName, jsonString);
+                File.WriteAllText(tempFilePath, jsonString);
+                File.Replace(tempFilePath, chatHistoryFileName + ".json", null);
+  
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Ошибка при сохранении файла: {ex.Message}");
+            }
         }
 
         public void LoadChat() 
         {
-            if (File.Exists(chatHistoryFileName))
+            try
             {
-                string jsonString = File.ReadAllText(chatHistoryFileName);
-                var data = JsonConvert.DeserializeObject<Tuple<List<string>, Dictionary<string, Dictionary<string, string>>>>(jsonString);
-                Chat = data.Item1;
-                Answers = data.Item2;
-
-                try
+                if (File.Exists(chatHistoryFileName))
                 {
+                    string jsonString = File.ReadAllText(chatHistoryFileName);
+                    var data = JsonConvert.DeserializeObject<Tuple<List<string>, Dictionary<string, Dictionary<string, string>>>>(jsonString);
+                    Chat = data.Item1;
+                    Answers = data.Item2;
                     for (int i = 0; i < Chat.Count; i++)
                     {
                         if (Chat[i].StartsWith("/load"))
@@ -64,7 +73,10 @@ namespace WpfApp
                         }
                     }
                 }
-                catch (Exception) { }
+            }
+            catch (Exception ex) 
+            {
+                throw new Exception($"Ошибка при загрузке файла: {ex.Message}");
             }
         }
 

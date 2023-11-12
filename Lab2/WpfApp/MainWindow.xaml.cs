@@ -27,6 +27,16 @@ namespace WpfApp
         public MainWindow()
         {
             InitializeComponent();
+
+            try 
+            {
+                viewData.LoadChat();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
             DataContext = viewData;
             listViewChat.ItemsSource = viewData.Chat;
             viewData.DownloadAsync();
@@ -98,7 +108,17 @@ namespace WpfApp
             listViewChat.Items.Refresh();
         }
 
-        protected override void OnClosing(System.ComponentModel.CancelEventArgs e) => viewData.SaveChat();
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e) 
+        {
+            try
+            {
+                viewData.SaveChat();
+            }
+            catch (Exception ex) 
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
 
     }
 }
