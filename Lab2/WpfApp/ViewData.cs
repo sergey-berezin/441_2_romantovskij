@@ -24,7 +24,7 @@ namespace WpfApp
         public List<string> Chat { get; set; }
         public Dictionary<string, Dictionary<string, string>> Answers { get; set; }  // {hash(text): {question: answer}}
 
-        public string chatHistoryFileName = "chat_history.json";
+        public string chatHistoryFileName = "chat_history";
 
         public ViewData()
         {
