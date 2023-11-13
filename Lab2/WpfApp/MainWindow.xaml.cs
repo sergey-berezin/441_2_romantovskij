@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
 using System.ComponentModel;
+using System.Security.Cryptography;
 
 namespace WpfApp
 {
@@ -26,6 +27,16 @@ namespace WpfApp
         public MainWindow()
         {
             InitializeComponent();
+
+            try 
+            {
+                viewData.LoadChat();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
             DataContext = viewData;
             listViewChat.ItemsSource = viewData.Chat;
             viewData.DownloadAsync();
@@ -50,8 +61,7 @@ namespace WpfApp
                     };
                     if (openFileDialog.ShowDialog() == true)
                     {
-                        viewData.text = File.ReadAllText(openFileDialog.FileName);
-                        viewData.Chat.Add(viewData.text);
+                        viewData.UpdateText(openFileDialog.FileName);
                     }
                 }
                 else if (!viewData.isDownloaded)
@@ -64,9 +74,20 @@ namespace WpfApp
                 }
                 else
                 {
-                    var answer = await viewData.llm.GetAnswerAsync(viewData.text, question);
+                    string answer;
+
+                    if (viewData.Answers[viewData.textHash].ContainsKey(question))
+                    {
+                        answer = viewData.Answers[viewData.textHash][question];
+                    }
+                    else
+                    {
+                        answer = await viewData.llm.GetAnswerAsync(viewData.text, question);
+                    }
                     if (answer != null)
                     {
+                        if(answer != "The operation was canceled.")
+                            viewData.Answers[viewData.textHash][question] = answer;
                         viewData.Chat.Add("Answer: " + answer);
                     }
                 }
@@ -79,9 +100,25 @@ namespace WpfApp
             btnSend.IsEnabled = true;
         }
 
-        private void btnCancel_Click(object sender, RoutedEventArgs e)
+        private void btnCancel_Click(object sender, RoutedEventArgs e) => viewData.cts.Cancel();
+
+        private void btnDelete_Click(object sender, RoutedEventArgs e) 
         {
-            viewData.cts.Cancel();
+            viewData.DeleteChat();
+            listViewChat.Items.Refresh();
         }
+
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e) 
+        {
+            try
+            {
+                viewData.SaveChat();
+            }
+            catch (Exception ex) 
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
     }
 }
