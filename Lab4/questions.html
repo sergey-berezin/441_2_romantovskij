@@ -1,0 +1,151 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Question Answering Service</title>
+    <style>
+        .question-container {
+            margin-bottom: 10px;
+        }
+
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+            visibility: hidden;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <input type="file" id="fileInput" onchange="displayFile()" />
+    <div id="fileContent" style="display: none;"></div>
+
+    <table id="resultTable">
+        <thead>
+            <tr>
+                <th>Question</th>
+                <th>Answer</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <h3 id="questionsTitle">Enter questions:</h3>
+    <div id="questionsContainer">
+    </div>
+
+
+    <button onclick="addQuestion()">Add Question</button>
+    <button onclick="clearQuestions()">Clear Questions</button>
+    <button onclick="sendRequest()">Submit</button>
+
+
+    <script>
+        function displayFile() {
+            const fileInput = document.getElementById('fileInput');
+            const fileContentDiv = document.getElementById('fileContent');
+
+            const file = fileInput.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    fileContentDiv.innerText = e.target.result;
+                    fileContentDiv.style.display = 'block';
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        function addQuestion() {
+            const questionsContainer = document.getElementById('questionsContainer');
+            const questionDiv = document.createElement('div');
+            questionDiv.classList.add('question-container');
+
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.placeholder = 'Enter a question';
+
+            const deleteButton = document.createElement('button');
+            deleteButton.innerText = 'Delete';
+            deleteButton.onclick = function () {
+                questionsContainer.removeChild(questionDiv);
+            };
+
+            questionDiv.appendChild(input);
+            questionDiv.appendChild(deleteButton);
+
+            questionsContainer.appendChild(questionDiv);
+        }
+
+        function clearQuestions() {
+            const questionsContainer = document.getElementById('questionsContainer');
+            questionsContainer.innerHTML = '';
+        }
+
+        function sendRequest() {
+            const fileContent = document.getElementById('fileContent').innerText;
+            const questionsContainer = document.getElementById('questionsContainer');
+            const questions = [];
+
+            questionsContainer.querySelectorAll('input').forEach(input => {
+                questions.push(input.value);
+            });
+
+            clearQuestions();
+
+            const title = document.getElementById('questionsTitle');
+            title.innerText = "Waiting for response...";
+
+            const resultTableBody = document.querySelector('#resultTable tbody');
+            resultTableBody.innerHTML = '';
+
+            document.getElementById("resultTable").style.visibility = "hidden";
+
+
+            fetch('https://localhost:7170/api/questions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/json',
+                },
+                body: JSON.stringify({
+                    Text: fileContent,
+                    Questions: questions,
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+
+                    title.innerText = JSON.stringify({
+                        Text: fileContent,
+                        Questions: questions,
+                    });
+
+                    questions.forEach((question, index) => {
+                        const answer = data.Answers[index];
+                        const row = resultTableBody.insertRow();
+                        const cell1 = row.insertCell(0);
+                        const cell2 = row.insertCell(1);
+                        cell1.innerHTML = question;
+                        cell2.innerHTML = answer;
+                    });
+                    title.innerText = "Enter questions:";
+                    document.getElementById("resultTable").style.visibility = "visible";
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    </script>
+</body>
+</html>
