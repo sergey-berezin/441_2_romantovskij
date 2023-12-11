@@ -144,7 +144,10 @@
                     title.innerText = "Enter questions:";
                     document.getElementById("resultTable").style.visibility = "visible";
                 })
-                .catch(error => console.error('Error:', error));
+                .catch(error => {
+                    console.error('Error:', error);
+                    title.innerText = "Server side error, try again later\nEnter questions:";
+                });
         }
     </script>
 </body>
